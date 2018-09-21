@@ -20,11 +20,6 @@ namespace ShamWowTests
                 strTwo = "another test string"
             };
 
-
-            //ProcessDocument process = new ProcessDocument(test, test)
-            //    .Scrub();
-            //var cleanedData = (SimpleTest)process.GetCleanData();
-
             ProcessDocument process = new ProcessDocument(test, ShamWow.Constants.ScrubTypes.Marked)
                 .Scrub();
             var cleanedData = (SimpleTest)process.CleanData();
@@ -55,10 +50,6 @@ namespace ShamWowTests
                     strTwo = "heres another string"
                 }
             };
-
-            //ProcessDocument process = new ProcessDocument(complex, complex)
-            //    .Scrub();
-            //var cleanedData = (ComplexTest)process.GetCleanData();
 
             ProcessDocument process = new ProcessDocument(complex, ShamWow.Constants.ScrubTypes.Marked)
     .Scrub();
