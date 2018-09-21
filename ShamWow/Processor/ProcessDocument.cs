@@ -28,6 +28,7 @@ namespace ShamWow.Processor
             //Sets all the intial information
             _type = dirtyDataInstance.GetType();
             _dataInstance = dirtyDataInstance;
+            _scrubType = scrubType;
             _manifest = new DocumentManifest();
         }
 
@@ -122,14 +123,8 @@ namespace ShamWow.Processor
                 .Where(p => GetPropertyValue(p) != null)
                 .ToList();
 
-            if (IsFiltered)
-            {
-                return FilterProperties(collection);
-            }
-            else
-            {
-                return collection;
-            }
+            //Cant filter classes since they are not required to be marked for inner properties to be scrubbed
+            return collection;
         }
 
         private List<PropertyInfo> GetBaseTypes(bool IsFiltered)

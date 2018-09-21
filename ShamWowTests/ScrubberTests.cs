@@ -32,6 +32,7 @@ namespace ShamWowTests
             Assert.NotEqual(cleanedData.emailStr, email);
             Assert.NotNull(cleanedData);
             Assert.IsType<SimpleTest>(cleanedData);
+            Assert.True(process.GetManifest().documentManifestInfos.Count == 1);
             Assert.True(process.CheckManifest());
         }
 
@@ -69,6 +70,7 @@ namespace ShamWowTests
             Assert.NotEqual(phone, cleanedData.phoneStr);
             Assert.NotNull(cleanedData);
             Assert.IsType<ComplexTest>(cleanedData);
+            Assert.True(process.GetManifest().documentManifestInfos.Count == 3);
             Assert.True(process.CheckManifest());
         }
     }
