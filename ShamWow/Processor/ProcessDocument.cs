@@ -92,7 +92,11 @@ namespace ShamWow.Processor
         {
             foreach (var prop in properties)
             {
-                RouteType(prop, ref _dataInstance, ref _scrubType);
+                var manifestInfo = RouteType(prop, ref _dataInstance, ref _scrubType);
+                if (manifestInfo != null)
+                {
+                    _manifest.documentManifestInfos.Add(manifestInfo);
+                }
             }
         }
 
