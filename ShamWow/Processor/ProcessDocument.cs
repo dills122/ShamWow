@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ShamWow.Constants;
 using ShamWow.Attributes;
+using System.Linq;
 
 namespace ShamWow.Processor
 {
@@ -27,6 +28,7 @@ namespace ShamWow.Processor
             //Sets all the intial information
             _type = dirtyDataInstance.GetType();
             _dataInstance = dirtyDataInstance;
+            _scrubType = scrubType;
             _manifest = new DocumentManifest();
         }
 
@@ -57,25 +59,112 @@ namespace ShamWow.Processor
 
         public ProcessDocument Scrub()
         {
+            var IsFiltered =
+                _scrubType == ScrubTypes.Marked ? true : false;
 
-            //Iterates through all properties of the source type
-            foreach (var property in _type.GetProperties())
-            {
-                RouteMajorPropertyType(property);
-            }
+            ScrubCollections(GetCollections(IsFiltered));
+
+            ScrubClasses(GetClasses(IsFiltered));
+
+            ScrubBaseTypes(GetBaseTypes(IsFiltered));
 
             _IsScrubbed = true;
 
             return this;
         }
 
+        private void ScrubCollections(List<PropertyInfo> properties)
+        {
+            foreach (var prop in properties)
+            {
+                ScrubListItems(prop);
+            }
+        }
+
+        private void ScrubClasses(List<PropertyInfo> properties)
+        {
+            foreach (var prop in properties)
+            {
+                ScrubClass(prop);
+            }
+        }
+
+        private void ScrubBaseTypes(List<PropertyInfo> properties)
+        {
+            foreach (var prop in properties)
+            {
+                var manifestInfo = RouteType(prop, ref _dataInstance, ref _scrubType);
+                if (manifestInfo != null)
+                {
+                    _manifest.documentManifestInfos.Add(manifestInfo);
+                }
+            }
+        }
+
+        private List<PropertyInfo> GetCollections(bool IsFiltered)
+        {
+            var collection = _type.GetProperties().Where(p => IsCollection(p))
+                .Where(p => GetPropertyValue(p) != null)
+                .ToList();
+
+            if (IsFiltered)
+            {
+                return FilterProperties(collection);
+            }
+            else
+            {
+                return collection;
+            }
+        }
+
+        private List<PropertyInfo> GetClasses(bool IsFiltered)
+        {
+            var collection = _type.GetProperties().Where(p => IsClass(p))
+                .Where(p => GetPropertyValue(p) != null)
+                .ToList();
+
+            //Cant filter classes since they are not required to be marked for inner properties to be scrubbed
+            return collection;
+        }
+
+        private List<PropertyInfo> GetBaseTypes(bool IsFiltered)
+        {
+            var collection = _type.GetProperties().Where(p => !IsClass(p) && !IsCollection(p))
+                .Where(p => GetPropertyValue(p) != null)
+                .ToList();
+
+            if (IsFiltered)
+            {
+                return FilterProperties(collection);
+            }
+            else
+            {
+                return collection;
+            }
+        }
+
+        private List<PropertyInfo> FilterProperties(List<PropertyInfo> properties)
+        {
+            return properties.Where(p => ProcessingHelper.GetCustomAttributes(p, typeof(Scrub))).ToList();
+        }
+
+        private bool IsCollection(PropertyInfo property)
+        {
+            return property.PropertyType.Namespace.Contains("Collections");
+        }
+
+        private bool IsClass(PropertyInfo property)
+        {
+            return !property.PropertyType.Namespace.Contains("System");
+        }
+
         public bool CheckManifest()
         {
             if (_IsScrubbed)
             {
-                foreach(var item in _manifest.documentManifestInfos)
+                foreach (var item in _manifest.documentManifestInfos)
                 {
-                    if(String.Equals(item.cleanDataHash,item.dirtyDataHash))
+                    if (String.Equals(item.cleanDataHash, item.dirtyDataHash))
                     {
                         return false;
                     }
@@ -85,54 +174,29 @@ namespace ShamWow.Processor
             return false;
         }
 
-        private void RouteMajorPropertyType(PropertyInfo property)
-        {
-            if (ToScrub(property))
-            {
-                //Checks if the property is a class
-                if (!property.PropertyType.Namespace.Contains("System"))
-                {
-                    var manifestItems = ScrubClass(property).Result;
-                    //Adds manifest items from inner class
-                    if (manifestItems.Count > 0)
-                    {
-                        _manifest.documentManifestInfos.AddRange(manifestItems);
-                    }
-                }
-                else if (property.PropertyType.Namespace.Contains("Collections"))
-                {
-                    ScrubListItems(property).Wait();
-                }
-                else
-                {
-                    //var dirtyValue = GetPropertyValue(property);
-
-                    ScrubProperty(property);
-
-                    //var cleanValue = GetPropertyValue(property);
-
-                   // _manifest.documentManifestInfos.Add(ManifestBuilder.CreateManifestInfo(property, dirtyValue, cleanValue));
-                }
-            }
-        }
-
         /// <summary>
         /// Sets the class values
         /// </summary>
         /// <param name="property"></param>
         /// <returns></returns>
-        private Task<List<DocumentManifestInfo>> ScrubClass(PropertyInfo property)
+        private Task ScrubClass(PropertyInfo property)
         {
-            var obj = property.GetValue(_dataInstance);
-            if (obj != null)
-            {
-                ProcessDocument process = new ProcessDocument(obj, _scrubType)
-                    .Scrub();
+            ProcessDocument process = new ProcessDocument(property.GetValue(_dataInstance), _scrubType)
+                .Scrub();
 
-                property.SetValue(_dataInstance, process.CleanData());
-                return Task.FromResult(process.GetManifest().documentManifestInfos);
+            property.SetValue(_dataInstance, process.CleanData());
+
+            ProcessManifestItems(process.GetManifest().documentManifestInfos);
+
+            return Task.CompletedTask;
+        }
+
+        private void ProcessManifestItems(List<DocumentManifestInfo> manifestInfos)
+        {
+            if (manifestInfos.Count > 0)
+            {
+                _manifest.documentManifestInfos.AddRange(manifestInfos);
             }
-            return Task.FromResult(new List<DocumentManifestInfo>());
         }
 
         /// <summary>
@@ -140,19 +204,14 @@ namespace ShamWow.Processor
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        private Task<Tuple<object,List<DocumentManifestInfo>>> ScrubClass(object obj)
+        private Task<object> ScrubClass(object obj)
         {
-            object cleanedClass = null;
+            ProcessDocument process = new ProcessDocument(obj, _scrubType)
+               .Scrub();
 
-            if (obj != null)
-            {
-                ProcessDocument process = new ProcessDocument(obj, _scrubType)
-                    .Scrub();
-                cleanedClass = process.CleanData();
-                return Task.FromResult(new Tuple<object, List<DocumentManifestInfo>>(cleanedClass, process._manifest.documentManifestInfos));
-            }
+            ProcessManifestItems(process.GetManifest().documentManifestInfos);
 
-            return Task.FromResult(new Tuple<object, List<DocumentManifestInfo>>(cleanedClass, new List<DocumentManifestInfo>()));
+            return Task.FromResult(process.CleanData());
         }
 
         /// <summary>
@@ -168,56 +227,15 @@ namespace ShamWow.Processor
             {
                 for (int i = 0; i < ilist.Count; i++)
                 {
-                    var tup = ScrubClass(ilist[i]).Result;
-                    if (tup.Item1 != null)
-                    {
-                        //Sets the new object value
-                        ilist[i] = tup.Item1;
-                    }
+                    var obj = ScrubClass(ilist[i]).Result;
 
-                    if(tup.Item2.Count > 0)
-                    {
-                        _manifest.documentManifestInfos.AddRange(tup.Item2);
-                    }
+                    //Sets the new object value
+                    ilist[i] = obj;
                 }
 
                 property.SetValue(_dataInstance, ilist);
             }
             return Task.CompletedTask;
-        }
-
-        private void ScrubProperty(PropertyInfo property)
-        {
-            var manifestInfo = RouteType(property, ref _dataInstance, ref _scrubType);
-            if(manifestInfo != null)
-            {
-                _manifest.documentManifestInfos.Add(manifestInfo);
-            }
-        }
-
-        /// <summary>
-        /// Checks if the property should be scrubbed
-        /// </summary>
-        /// <param name="property"></param>
-        /// <returns></returns>
-        private bool ToScrub(PropertyInfo property)
-        {
-            if (_scrubType == ScrubTypes.Full)
-            {
-                return true;
-            }
-            else if (_scrubType == ScrubTypes.Marked)
-            {
-                if (ProcessingHelper.GetCustomAttributes(property, typeof(Scrub)) && GetPropertyValue(property) != null)
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                return false;
-            }
-            return false;
         }
 
         /// <summary>

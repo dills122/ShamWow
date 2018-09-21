@@ -20,11 +20,6 @@ namespace ShamWowTests
                 strTwo = "another test string"
             };
 
-
-            //ProcessDocument process = new ProcessDocument(test, test)
-            //    .Scrub();
-            //var cleanedData = (SimpleTest)process.GetCleanData();
-
             ProcessDocument process = new ProcessDocument(test, ShamWow.Constants.ScrubTypes.Marked)
                 .Scrub();
             var cleanedData = (SimpleTest)process.CleanData();
@@ -32,6 +27,7 @@ namespace ShamWowTests
             Assert.NotEqual(cleanedData.emailStr, email);
             Assert.NotNull(cleanedData);
             Assert.IsType<SimpleTest>(cleanedData);
+            Assert.True(process.GetManifest().documentManifestInfos.Count == 1);
             Assert.True(process.CheckManifest());
         }
 
@@ -55,10 +51,6 @@ namespace ShamWowTests
                 }
             };
 
-            //ProcessDocument process = new ProcessDocument(complex, complex)
-            //    .Scrub();
-            //var cleanedData = (ComplexTest)process.GetCleanData();
-
             ProcessDocument process = new ProcessDocument(complex, ShamWow.Constants.ScrubTypes.Marked)
     .Scrub();
             var cleanedData = (ComplexTest)process.CleanData();
@@ -69,6 +61,7 @@ namespace ShamWowTests
             Assert.NotEqual(phone, cleanedData.phoneStr);
             Assert.NotNull(cleanedData);
             Assert.IsType<ComplexTest>(cleanedData);
+            Assert.True(process.GetManifest().documentManifestInfos.Count == 3);
             Assert.True(process.CheckManifest());
         }
     }

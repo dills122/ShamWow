@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShamWow", "ShamWow\ShamWow.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShamWowTests", "ShamWowTests\ShamWowTests.csproj", "{983583D1-7EF3-4815-AB95-72D5BE576B50}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Build", "Build\Build.csproj", "{B1E7D303-15FC-4464-BC6D-15537EB68C25}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{983583D1-7EF3-4815-AB95-72D5BE576B50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{983583D1-7EF3-4815-AB95-72D5BE576B50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{983583D1-7EF3-4815-AB95-72D5BE576B50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1E7D303-15FC-4464-BC6D-15537EB68C25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1E7D303-15FC-4464-BC6D-15537EB68C25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1E7D303-15FC-4464-BC6D-15537EB68C25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1E7D303-15FC-4464-BC6D-15537EB68C25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
