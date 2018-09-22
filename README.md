@@ -19,10 +19,47 @@ This functions by adding data annotations/attributes to your transform POCOs.
 
 ### Scrubbing Types
 
-* StringAtr
-* DoubleAtr (Coming)
-* DecimalAtr (Coming)
-* IntAtr (Coming)
+#### StringAtr
+
+> Available String Scrub Types
+
+* Address
+* AddressTwo
+* City
+* State
+* Zip
+* Phone
+* SSN
+* Email
+* DOB
+* FullName
+* LastName
+* FirstName
+* MiddleName
+* UserName
+
+
+
+#### DoubleAtr
+
+> Available Double Types
+
+**Coming Soon**
+
+#### DecimalAtr
+
+> Available Decimal Types
+
+**Coming Soon**
+
+#### IntAtr
+
+> Available Integer Types
+
+* Phone
+* Zip
+* VIN (Coming Soon)
+* PIN (Coming Soon)
 
 
 Example for scrubbing Email
@@ -37,6 +74,15 @@ public string str {get; set;}
 
 Through reflection this app is able to parse a POCO by properties and find data marked for scrubbing through custom attributes.
 
-> If you have a POCO to map an XML file to you're ready to mark it for scrubbing.
+> If you have a POCO then you're all set to start scrubbing personally identifiable information (PII)
+
+> The POCO for translating the file to an object will always be the user's responsibility
+
+
+### Future
+
+* XML and JSON file Readers
+* TPL Dataflow Pipeline for process flow
+* Extensive Scrub Types
 
 ### **Still a work in progress**
