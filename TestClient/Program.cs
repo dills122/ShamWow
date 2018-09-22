@@ -15,9 +15,13 @@ namespace TestClient
                 testZip = 15767
             };
 
-            ProcessDocument processor = new
-                ProcessDocument(test, ShamWow.Constants.ScrubTypes.Full)
-                .Scrub();
+            //ProcessDocument processor = new
+            //    ProcessDocument(test, ShamWow.Constants.ScrubTypes.Full)
+            //    .Scrub();
+
+            ProcessDocument processor = ProcessDocument.GetFactory().Create(test, ShamWow.Constants.ScrubTypes.Full);
+
+            processor.Scrub();
 
             var cleanData = processor.CleanData();
 

@@ -18,7 +18,7 @@ namespace ShamWow.Processor
         private bool _IsScrubbed = false;
         private ScrubTypes _scrubType;
 
-        public ProcessDocument(object dirtyDataInstance, ScrubTypes scrubType)
+        private ProcessDocument(object dirtyDataInstance, ScrubTypes scrubType)
         {
             if (dirtyDataInstance == null)
             {
@@ -30,6 +30,11 @@ namespace ShamWow.Processor
             _dataInstance = dirtyDataInstance;
             _scrubType = scrubType;
             _manifest = new DocumentManifest();
+        }
+
+        public static Factory GetFactory()
+        {
+            return new Factory((obj, scrub) => new ProcessDocument(obj, scrub));
         }
 
         /// <summary>

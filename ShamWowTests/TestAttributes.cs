@@ -17,9 +17,10 @@ namespace ShamWowTests
                 failString = "string"
             };
 
-            ProcessDocument processDocument = new ProcessDocument(test, ShamWow.Constants.ScrubTypes.Marked)
-                .Scrub();
+            ProcessDocument processDocument = ProcessDocument.GetFactory().Create(test, ShamWow.Constants.ScrubTypes.Marked);
 
+            processDocument.Scrub();
+                
             var result = processDocument.CleanData();
 
             Assert.NotNull(result);
