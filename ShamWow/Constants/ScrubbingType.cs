@@ -9,4 +9,31 @@ namespace ShamWow.Constants
         Full,
         Marked
     }
+
+    public enum StringTypes
+    {
+        Address,
+        AddressTwo,
+        Phone,
+        SSN,
+        Email,
+        City,
+        State,
+        Zip
+    }
+
+    public enum IntTypes
+    {
+        Phone,
+        Zip
+    }
+
+    public enum DoubleTypes
+    {
+
+    }
+
+    public enum DecimalTypes
+    {
+    }
 }
