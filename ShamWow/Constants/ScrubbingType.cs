@@ -14,18 +14,27 @@ namespace ShamWow.Constants
     {
         Address,
         AddressTwo,
+        City,
+        State,
+        Zip,
         Phone,
         SSN,
         Email,
-        City,
-        State,
-        Zip
+        DOB,
+        FullName,
+        LastName,
+        FirstName,
+        MiddleName,
+        UserName
     }
 
     public enum IntTypes
     {
         Phone,
-        Zip
+        Zip,
+        VIN,
+        PIN,
+
     }
 
     public enum DoubleTypes
@@ -35,5 +44,6 @@ namespace ShamWow.Constants
 
     public enum DecimalTypes
     {
+
     }
 }

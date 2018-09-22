@@ -15,6 +15,8 @@ namespace TestClient
                 testZip = 15767
             };
 
+            var tst = Faker.Phone.Number();
+
             //ProcessDocument processor = new
             //    ProcessDocument(test, ShamWow.Constants.ScrubTypes.Full)
             //    .Scrub();
