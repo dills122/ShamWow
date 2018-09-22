@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace ShamWow.Processor
 {
-    public class ProcessDocument : Router
+    public class ProcessDocument : Router, IProcessDocument
     {
         private Type _type;
         private object _dataInstance;
