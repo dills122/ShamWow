@@ -2,16 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <PackageId>ShamWow_Scrubber</PackageId>
+    <Authors>Dills122</Authors>
+    <Company>Steele Inc.</Company>
+    <Description>A class srubber that can be used for removing personally identifiable information.</Description>
+    <RepositoryUrl>https://github.com/dills122/ShamWow</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Faker.Net" Version="1.0.3" />
     <PackageReference Include="Gridsum.DataflowEx" Version="2.0.0" />
     <PackageReference Include="System.Data.HashFunction.xxHash" Version="2.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    
   </ItemGroup>
 
 </Project>

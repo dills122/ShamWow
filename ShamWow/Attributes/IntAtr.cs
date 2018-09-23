@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShamWow.Constants;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,11 +7,7 @@ namespace ShamWow.Attributes
 {
     public class IntAtr : Attribute
     {
-        private enum IntTypes
-        {
-            Phone,
-            Zip
-        }
+
         public string scrubType { get; private set; }
 
         public IntAtr(string scrubType)

@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace ShamWow.Processor
 {
-    public class ProcessDocument : Router
+    public class ProcessDocument : Router, IProcessDocument
     {
         private Type _type;
         private object _dataInstance;
@@ -18,7 +18,7 @@ namespace ShamWow.Processor
         private bool _IsScrubbed = false;
         private ScrubTypes _scrubType;
 
-        public ProcessDocument(object dirtyDataInstance, ScrubTypes scrubType)
+        private ProcessDocument(object dirtyDataInstance, ScrubTypes scrubType)
         {
             if (dirtyDataInstance == null)
             {
@@ -30,6 +30,15 @@ namespace ShamWow.Processor
             _dataInstance = dirtyDataInstance;
             _scrubType = scrubType;
             _manifest = new DocumentManifest();
+        }
+
+        /// <summary>
+        /// Returns a new Instance of the Processor
+        /// </summary>
+        /// <returns></returns>
+        public static Factory GetFactory()
+        {
+            return new Factory((obj, scrub) => new ProcessDocument(obj, scrub));
         }
 
         /// <summary>
@@ -57,6 +66,10 @@ namespace ShamWow.Processor
             return _manifest;
         }
 
+        /// <summary>
+        /// Initiates the Scrubbing Process
+        /// </summary>
+        /// <returns></returns>
         public ProcessDocument Scrub()
         {
             var IsFiltered =
@@ -73,91 +86,10 @@ namespace ShamWow.Processor
             return this;
         }
 
-        private void ScrubCollections(List<PropertyInfo> properties)
-        {
-            foreach (var prop in properties)
-            {
-                ScrubListItems(prop);
-            }
-        }
-
-        private void ScrubClasses(List<PropertyInfo> properties)
-        {
-            foreach (var prop in properties)
-            {
-                ScrubClass(prop);
-            }
-        }
-
-        private void ScrubBaseTypes(List<PropertyInfo> properties)
-        {
-            foreach (var prop in properties)
-            {
-                var manifestInfo = RouteType(prop, ref _dataInstance, ref _scrubType);
-                if (manifestInfo != null)
-                {
-                    _manifest.documentManifestInfos.Add(manifestInfo);
-                }
-            }
-        }
-
-        private List<PropertyInfo> GetCollections(bool IsFiltered)
-        {
-            var collection = _type.GetProperties().Where(p => IsCollection(p))
-                .Where(p => GetPropertyValue(p) != null)
-                .ToList();
-
-            if (IsFiltered)
-            {
-                return FilterProperties(collection);
-            }
-            else
-            {
-                return collection;
-            }
-        }
-
-        private List<PropertyInfo> GetClasses(bool IsFiltered)
-        {
-            var collection = _type.GetProperties().Where(p => IsClass(p))
-                .Where(p => GetPropertyValue(p) != null)
-                .ToList();
-
-            //Cant filter classes since they are not required to be marked for inner properties to be scrubbed
-            return collection;
-        }
-
-        private List<PropertyInfo> GetBaseTypes(bool IsFiltered)
-        {
-            var collection = _type.GetProperties().Where(p => !IsClass(p) && !IsCollection(p))
-                .Where(p => GetPropertyValue(p) != null)
-                .ToList();
-
-            if (IsFiltered)
-            {
-                return FilterProperties(collection);
-            }
-            else
-            {
-                return collection;
-            }
-        }
-
-        private List<PropertyInfo> FilterProperties(List<PropertyInfo> properties)
-        {
-            return properties.Where(p => ProcessingHelper.GetCustomAttributes(p, typeof(Scrub))).ToList();
-        }
-
-        private bool IsCollection(PropertyInfo property)
-        {
-            return property.PropertyType.Namespace.Contains("Collections");
-        }
-
-        private bool IsClass(PropertyInfo property)
-        {
-            return !property.PropertyType.Namespace.Contains("System");
-        }
-
+        /// <summary>
+        /// Checks if the Manifest is Valid
+        /// </summary>
+        /// <returns></returns>
         public bool CheckManifest()
         {
             if (_IsScrubbed)
@@ -175,6 +107,103 @@ namespace ShamWow.Processor
         }
 
         /// <summary>
+        /// Scrubs all Collection Type Properties
+        /// </summary>
+        /// <param name="properties"></param>
+        private void ScrubCollections(List<PropertyInfo> properties)
+        {
+            foreach (var prop in properties)
+            {
+                ScrubListItems(prop);
+            }
+        }
+
+        /// <summary>
+        /// Scrubs all Class Type Properties
+        /// </summary>
+        /// <param name="properties"></param>
+        private void ScrubClasses(List<PropertyInfo> properties)
+        {
+            foreach (var prop in properties)
+            {
+                ScrubClass(prop);
+            }
+        }
+
+        /// <summary>
+        /// Sends all Base Type Properties to be Scrubbed
+        /// </summary>
+        /// <param name="properties"></param>
+        private void ScrubBaseTypes(List<PropertyInfo> properties)
+        {
+            foreach (var prop in properties)
+            {
+                var manifestInfo = RouteType(prop, ref _dataInstance, ref _scrubType);
+                if (manifestInfo != null)
+                {
+                    _manifest.documentManifestInfos.Add(manifestInfo);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets a Collections of all Collections with the Object
+        /// </summary>
+        /// <param name="IsFiltered"></param>
+        /// <returns></returns>
+        private List<PropertyInfo> GetCollections(bool IsFiltered)
+        {
+            var collection = _type.GetProperties().Where(p => IsCollection(p))
+                .Where(p => GetPropertyValue(p) != null)
+                .ToList();
+
+            if (IsFiltered)
+            {
+                return FilterProperties(collection);
+            }
+            else
+            {
+                return collection;
+            }
+        }
+
+        /// <summary>
+        /// Gets a Collection of all Classes within the Object
+        /// </summary>
+        /// <param name="IsFiltered"></param>
+        /// <returns></returns>
+        private List<PropertyInfo> GetClasses(bool IsFiltered)
+        {
+            var collection = _type.GetProperties().Where(p => IsClass(p))
+                .Where(p => GetPropertyValue(p) != null)
+                .ToList();
+
+            //Cant filter classes since they are not required to be marked for inner properties to be scrubbed
+            return collection;
+        }
+
+        /// <summary>
+        /// Get All of the Base Type Properties
+        /// </summary>
+        /// <param name="IsFiltered"></param>
+        /// <returns></returns>
+        private List<PropertyInfo> GetBaseTypes(bool IsFiltered)
+        {
+            var collection = _type.GetProperties().Where(p => !IsClass(p) && !IsCollection(p))
+                .Where(p => GetPropertyValue(p) != null)
+                .ToList();
+
+            if (IsFiltered)
+            {
+                return FilterProperties(collection);
+            }
+            else
+            {
+                return collection;
+            }
+        }
+
+        /// <summary>
         /// Sets the class values
         /// </summary>
         /// <param name="property"></param>
@@ -189,14 +218,6 @@ namespace ShamWow.Processor
             ProcessManifestItems(process.GetManifest().documentManifestInfos);
 
             return Task.CompletedTask;
-        }
-
-        private void ProcessManifestItems(List<DocumentManifestInfo> manifestInfos)
-        {
-            if (manifestInfos.Count > 0)
-            {
-                _manifest.documentManifestInfos.AddRange(manifestInfos);
-            }
         }
 
         /// <summary>
@@ -239,6 +260,48 @@ namespace ShamWow.Processor
         }
 
         /// <summary>
+        /// Filters out properties that aren't marked to be scrubbed
+        /// </summary>
+        /// <param name="properties"></param>
+        /// <returns></returns>
+        private List<PropertyInfo> FilterProperties(List<PropertyInfo> properties)
+        {
+            return properties.Where(p => GetCustomAttributes(p, typeof(Scrub))).ToList();
+        }
+
+        /// <summary>
+        /// Checks if the Property is a Collection
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        private bool IsCollection(PropertyInfo property)
+        {
+            return property.PropertyType.Namespace.Contains("Collections");
+        }
+
+        /// <summary>
+        /// Checks if the Property is a Class
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        private bool IsClass(PropertyInfo property)
+        {
+            return !property.PropertyType.Namespace.Contains("System");
+        }
+
+        /// <summary>
+        /// Processes the new incoming Manifest Items
+        /// </summary>
+        /// <param name="manifestInfos"></param>
+        private void ProcessManifestItems(List<DocumentManifestInfo> manifestInfos)
+        {
+            if (manifestInfos.Count > 0)
+            {
+                _manifest.documentManifestInfos.AddRange(manifestInfos);
+            }
+        }
+
+        /// <summary>
         /// Gets the value from the property
         /// </summary>
         /// <param name="property"></param>
@@ -246,6 +309,30 @@ namespace ShamWow.Processor
         private object GetPropertyValue(PropertyInfo property)
         {
             return property.GetValue(_dataInstance, null);
+        }
+
+        /// <summary>
+        /// Returns if the Attribute exists on the Property
+        /// </summary>
+        /// <param name="property"></param>
+        /// <param name="AttributeName"></param>
+        /// <returns></returns>
+        private bool GetCustomAttributes(PropertyInfo property, Type AttributeName)
+        {
+
+            var customAttribute = property.GetCustomAttributes().Where(a => a.TypeId == AttributeName).ToList();
+            //Eh
+            return customAttribute.Count == 1;
+        }
+
+        /// <summary>
+        /// Returns all of the Custom Attributes on that property
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        private List<Attribute> GetCustomAttributes(PropertyInfo property)
+        {
+            return property.GetCustomAttributes().ToList();
         }
 
     }

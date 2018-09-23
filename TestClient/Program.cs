@@ -1,4 +1,5 @@
 ﻿using ShamWow.Processor;
+using ShamWow.SerializationHelpers;
 using System;
 
 namespace TestClient
@@ -15,9 +16,9 @@ namespace TestClient
                 testZip = 15767
             };
 
-            ProcessDocument processor = new
-                ProcessDocument(test, ShamWow.Constants.ScrubTypes.Full)
-                .Scrub();
+            IProcessDocument processor = ProcessDocument.GetFactory().Create(test, ShamWow.Constants.ScrubTypes.Full);
+
+            processor.Scrub();
 
             var cleanData = processor.CleanData();
 

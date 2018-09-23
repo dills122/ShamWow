@@ -19,16 +19,16 @@ namespace ShamWowTests
                 str = "test string",
                 strTwo = "another test string"
             };
+            IProcessDocument processor = ProcessDocument.GetFactory().Create(test, ShamWow.Constants.ScrubTypes.Marked);
 
-            ProcessDocument process = new ProcessDocument(test, ShamWow.Constants.ScrubTypes.Marked)
-                .Scrub();
-            var cleanedData = (SimpleTest)process.CleanData();
+            processor.Scrub();
+            var cleanedData = (SimpleTest)processor.CleanData();
 
             Assert.NotEqual(cleanedData.emailStr, email);
             Assert.NotNull(cleanedData);
             Assert.IsType<SimpleTest>(cleanedData);
-            Assert.True(process.GetManifest().documentManifestInfos.Count == 1);
-            Assert.True(process.CheckManifest());
+            Assert.True(processor.GetManifest().documentManifestInfos.Count == 1);
+            Assert.True(processor.CheckManifest());
         }
 
         [Theory]
@@ -51,9 +51,10 @@ namespace ShamWowTests
                 }
             };
 
-            ProcessDocument process = new ProcessDocument(complex, ShamWow.Constants.ScrubTypes.Marked)
-    .Scrub();
-            var cleanedData = (ComplexTest)process.CleanData();
+            IProcessDocument processor = ProcessDocument.GetFactory().Create(complex, ShamWow.Constants.ScrubTypes.Marked);
+
+            processor.Scrub();
+            var cleanedData = (ComplexTest)processor.CleanData();
 
             Assert.NotEqual(cleanedData.emailString, email);
             Assert.NotEqual(cleanedData.test.emailStr, email);
@@ -61,8 +62,8 @@ namespace ShamWowTests
             Assert.NotEqual(phone, cleanedData.phoneStr);
             Assert.NotNull(cleanedData);
             Assert.IsType<ComplexTest>(cleanedData);
-            Assert.True(process.GetManifest().documentManifestInfos.Count == 3);
-            Assert.True(process.CheckManifest());
+            Assert.True(processor.GetManifest().documentManifestInfos.Count == 3);
+            Assert.True(processor.CheckManifest());
         }
     }
 }

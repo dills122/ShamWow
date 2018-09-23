@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShamWow.Constants;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,9 +7,7 @@ namespace ShamWow.Attributes
 {
     class DecimalAtr : Attribute
     {
-        private enum DecimalTypes
-        {
-        }
+
         public string scrubType { get; private set; }
 
         public DecimalAtr(string scrubType)
