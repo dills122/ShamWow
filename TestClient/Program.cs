@@ -1,4 +1,5 @@
 ﻿using ShamWow.Processor;
+using ShamWow.SerializationHelpers;
 using System;
 
 namespace TestClient
@@ -14,10 +15,6 @@ namespace TestClient
                 str = "Fake Address",
                 testZip = 15767
             };
-
-            //ProcessDocument processor = new
-            //    ProcessDocument(test, ShamWow.Constants.ScrubTypes.Full)
-            //    .Scrub();
 
             IProcessDocument processor = ProcessDocument.GetFactory().Create(test, ShamWow.Constants.ScrubTypes.Full);
 

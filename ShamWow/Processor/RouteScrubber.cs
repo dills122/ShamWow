@@ -8,7 +8,7 @@ using ShamWow.Exceptions;
 namespace ShamWow.Processor
 {
     //TODO Rewrite Router to work with all types and follow new standards
-    public class Router
+    public abstract class Router
     {
         private object _cleanData;
         private object _dirtyData;
@@ -52,7 +52,7 @@ namespace ShamWow.Processor
         }
 
         //Implement the rest of the Attributes
-        public object RouteStringType(PropertyInfo property, ref object cleanDataInstance, ScrubTypes scrubType)
+        private object RouteStringType(PropertyInfo property, ref object cleanDataInstance, ScrubTypes scrubType)
         {
             _dirtyData = property.GetValue(cleanDataInstance, null);
 
@@ -131,21 +131,21 @@ namespace ShamWow.Processor
         }
 
 
-        public object RouteDoubleType(PropertyInfo property, ref object cleanDataInstance, ScrubTypes scrubType)
+        private object RouteDoubleType(PropertyInfo property, ref object cleanDataInstance, ScrubTypes scrubType)
         {
             _dirtyData = property.GetValue(cleanDataInstance, null);
 
             return cleanDataInstance;
         }
 
-        public object RouteDecimalType(PropertyInfo property, ref object cleanDataInstance, ScrubTypes scrubType)
+        private object RouteDecimalType(PropertyInfo property, ref object cleanDataInstance, ScrubTypes scrubType)
         {
             _dirtyData = property.GetValue(cleanDataInstance, null);
 
             return cleanDataInstance;
         }
 
-        public object RouteIntegerType(PropertyInfo property, ref object cleanDataInstance, ScrubTypes scrubType)
+        private object RouteIntegerType(PropertyInfo property, ref object cleanDataInstance, ScrubTypes scrubType)
         {
             _dirtyData = property.GetValue(cleanDataInstance, null);
 
