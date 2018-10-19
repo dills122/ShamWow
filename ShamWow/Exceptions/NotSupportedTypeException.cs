@@ -6,12 +6,7 @@ namespace ShamWow.Exceptions
 {
     public class NotSupportedTypeException : Exception
     {
-        string message = "Type not supported by scrubber yet";
-
-        public NotSupportedTypeException()
-        {
-
-        }
+        public NotSupportedTypeException() : base("Type not supported by scrubber") { }
 
         public NotSupportedTypeException(string message) : base(message) { }
     }

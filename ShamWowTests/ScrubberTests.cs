@@ -19,7 +19,7 @@ namespace ShamWowTests
                 str = "test string",
                 strTwo = "another test string"
             };
-            IProcessDocument processor = ProcessDocument.GetFactory().Create(test, ShamWow.Constants.ScrubTypes.Marked);
+            IProcessDocument processor = ProcessDocument.GetFactory().Create(test, ShamWow.Constants.ScrubType.Marked);
 
             processor.Scrub();
             var cleanedData = (SimpleTest)processor.CleanData();
@@ -51,7 +51,7 @@ namespace ShamWowTests
                 }
             };
 
-            IProcessDocument processor = ProcessDocument.GetFactory().Create(complex, ShamWow.Constants.ScrubTypes.Marked);
+            IProcessDocument processor = ProcessDocument.GetFactory().Create(complex, ShamWow.Constants.ScrubType.Marked);
 
             processor.Scrub();
             var cleanedData = (ComplexTest)processor.CleanData();

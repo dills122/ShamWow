@@ -16,7 +16,7 @@ namespace TestClient
                 testZip = 15767
             };
 
-            IProcessDocument processor = ProcessDocument.GetFactory().Create(test, ShamWow.Constants.ScrubTypes.Full);
+            IProcessDocument processor = ProcessDocument.GetFactory().Create(test, ShamWow.Constants.ScrubType.Full);
 
             processor.Scrub();
 

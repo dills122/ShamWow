@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.HashFunction;
 using System.Data.HashFunction.xxHash;
 using System.Reflection;
-using System.Text;
 
 namespace ShamWow.Processor
 {

@@ -21,7 +21,7 @@ namespace ShamWow.Processor
         }
 
 
-        public DocumentManifestInfo RouteType(PropertyInfo property, ref object dataInstance, ref ScrubTypes scrubType)
+        public DocumentManifestInfo RouteType(PropertyInfo property, ref object dataInstance, ref ScrubType scrubType)
         {
             if (Equals(property.PropertyType, typeof(System.Int32)))
             {
@@ -52,7 +52,7 @@ namespace ShamWow.Processor
         }
 
         //Implement the rest of the Attributes
-        private object RouteStringType(PropertyInfo property, ref object cleanDataInstance, ScrubTypes scrubType)
+        private object RouteStringType(PropertyInfo property, ref object cleanDataInstance, ScrubType scrubType)
         {
             _dirtyData = property.GetValue(cleanDataInstance, null);
 
@@ -60,49 +60,52 @@ namespace ShamWow.Processor
             if (data != null)
             {
                 StringAtr atr = data as StringAtr;
-                string attrScrubType = atr.scrubType;
+                StringType attrScrubType = atr.scrubType;
 
                 switch (attrScrubType)
                 {
-                    case "SSN":
+                    case StringType.SSN:
                         property.SetValue(cleanDataInstance, ScrubBasicTypes.ScrubSSN());
                         break;
-                    case "Phone":
+                    case StringType.Phone:
                         property.SetValue(cleanDataInstance, Faker.Phone.Number());
                         break;
-                    case "Email":
+                    case StringType.Email:
                         property.SetValue(cleanDataInstance, Faker.Internet.Email());
                         break;
-                    case "Address":
+                    case StringType.Address:
                         property.SetValue(cleanDataInstance, Faker.Address.StreetAddress());
                         break;
-                    case "AddressTwo":
+                    case StringType.AddressTwo:
                         property.SetValue(cleanDataInstance, Faker.Address.SecondaryAddress());
                         break;
-                    case "City":
+                    case StringType.City:
                         property.SetValue(cleanDataInstance, Faker.Address.City());
                         break;
-                    case "State":
+                    case StringType.State:
                         property.SetValue(cleanDataInstance, Faker.Address.UsState());
                         break;
-                    case "Zip":
+                    case StringType.Zip:
                         property.SetValue(cleanDataInstance, Faker.Address.ZipCode());
                         break;
-                    case "FullName":
+                    case StringType.FullName:
                         property.SetValue(cleanDataInstance, Faker.Name.FullName());
                         break;
-                    case "FirstName":
+                    case StringType.FirstName:
                         property.SetValue(cleanDataInstance, Faker.Name.First());
                         break;
-                    case "LastName":
+                    case StringType.LastName:
                         property.SetValue(cleanDataInstance, Faker.Name.Last());
                         break;
-                    case "MiddleName":
+                    case StringType.MiddleName:
                         //Two First Names
                         property.SetValue(cleanDataInstance, Faker.Name.First());
                         break;
-                    case "UserName":
+                    case StringType.UserName:
                         property.SetValue(cleanDataInstance, Faker.Internet.UserName());
+                        break;
+                    case StringType.Lorem:
+                        property.SetValue(cleanDataInstance, Faker.Lorem.Sentence(atr.length));
                         break;
                     default:
                         //TODO Update to lorem
@@ -112,7 +115,7 @@ namespace ShamWow.Processor
 
                 _cleanData = property.GetValue(cleanDataInstance, null);
             }
-            else if (scrubType == ScrubTypes.Full)
+            else if (scrubType == ScrubType.Full)
             {
                 property.SetValue(cleanDataInstance, Faker.Lorem.Sentence());
 
@@ -131,21 +134,21 @@ namespace ShamWow.Processor
         }
 
 
-        private object RouteDoubleType(PropertyInfo property, ref object cleanDataInstance, ScrubTypes scrubType)
+        private object RouteDoubleType(PropertyInfo property, ref object cleanDataInstance, ScrubType scrubType)
         {
             _dirtyData = property.GetValue(cleanDataInstance, null);
 
             return cleanDataInstance;
         }
 
-        private object RouteDecimalType(PropertyInfo property, ref object cleanDataInstance, ScrubTypes scrubType)
+        private object RouteDecimalType(PropertyInfo property, ref object cleanDataInstance, ScrubType scrubType)
         {
             _dirtyData = property.GetValue(cleanDataInstance, null);
 
             return cleanDataInstance;
         }
 
-        private object RouteIntegerType(PropertyInfo property, ref object cleanDataInstance, ScrubTypes scrubType)
+        private object RouteIntegerType(PropertyInfo property, ref object cleanDataInstance, ScrubType scrubType)
         {
             _dirtyData = property.GetValue(cleanDataInstance, null);
 
@@ -153,17 +156,14 @@ namespace ShamWow.Processor
             if (data != null)
             {
                 IntAtr atr = data as IntAtr;
-                string attrScrubType = atr.scrubType;
+                IntType attrScrubType = atr.scrubType;
 
                 switch (attrScrubType)
                 {
-                    case "Zip":
+                    case IntType.Zip:
                         property.SetValue(cleanDataInstance, Convert.ToInt32(Faker.Address.ZipCode().Replace("-", string.Empty)));
                         break;
-                    case "Phone":
-                        //property.SetValue(cleanDataInstance, Convert.ToInt32(Faker.Phone.Number().Replace("-", string.Empty)));
-                        break;
-                    case "VIN":
+                    case IntType.VIN:
                         //TODO improve
                         property.SetValue(cleanDataInstance, Faker.RandomNumber.Next(10000000, 99999999));
                         break;
