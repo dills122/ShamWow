@@ -80,9 +80,4 @@ Through reflection this app is able to parse a POCO by properties and find data 
 
 
 ### Future
-
-* XML and JSON file Readers
-* TPL Dataflow Pipeline for process flow
 * Extensive Scrub Types
-
-### **Still a work in progress**
