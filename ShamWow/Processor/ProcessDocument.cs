@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using ShamWow.Constants;
 using ShamWow.Attributes;
@@ -16,9 +15,9 @@ namespace ShamWow.Processor
         private object _dataInstance;
         private DocumentManifest _manifest;
         private bool _IsScrubbed = false;
-        private ScrubTypes _scrubType;
+        private ScrubType _scrubType;
 
-        private ProcessDocument(object dirtyDataInstance, ScrubTypes scrubType)
+        private ProcessDocument(object dirtyDataInstance, ScrubType scrubType)
         {
             if (dirtyDataInstance == null)
             {
@@ -73,7 +72,7 @@ namespace ShamWow.Processor
         public ProcessDocument Scrub()
         {
             var IsFiltered =
-                _scrubType == ScrubTypes.Marked ? true : false;
+                _scrubType == ScrubType.Marked ? true : false;
 
             ScrubCollections(GetCollections(IsFiltered));
 

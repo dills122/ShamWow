@@ -7,14 +7,14 @@ namespace ShamWow.Processor
 {
     public class Factory
     {
-        private Func<Object, ScrubTypes, ProcessDocument> _ctorCaller;
+        private Func<Object, ScrubType, ProcessDocument> _ctorCaller;
 
-        public Factory (Func<Object, ScrubTypes, ProcessDocument> ctorCaller)
+        public Factory (Func<Object, ScrubType, ProcessDocument> ctorCaller)
         {
             _ctorCaller = ctorCaller;
         }
 
-        public ProcessDocument Create(object unScrubbedData, ScrubTypes scrubType)
+        public ProcessDocument Create(object unScrubbedData, ScrubType scrubType)
         {
             if(unScrubbedData != null)
             {

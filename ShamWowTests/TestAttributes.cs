@@ -9,21 +9,6 @@ namespace ShamWowTests
 {
     public class TestAttributes
     {
-        [Fact]
-        public void TestBadPOCO()
-        {
-            ErrorTest test = new ErrorTest
-            {
-                failString = "string"
-            };
-
-            ProcessDocument processDocument = ProcessDocument.GetFactory().Create(test, ShamWow.Constants.ScrubTypes.Marked);
-
-            processDocument.Scrub();
-                
-            var result = processDocument.CleanData();
-
-            Assert.NotNull(result);
-        }    
+ 
     }
 }

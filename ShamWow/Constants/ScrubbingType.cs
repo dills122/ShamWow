@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ShamWow.Constants
+﻿namespace ShamWow.Constants
 {
-    public enum ScrubTypes
+    public enum ScrubType
     {
         Full,
         Marked
     }
 
-    public enum StringTypes
+    public enum StringType
     {
         Address,
         AddressTwo,
@@ -25,24 +21,24 @@ namespace ShamWow.Constants
         LastName,
         FirstName,
         MiddleName,
-        UserName
+        UserName,
+        Lorem
     }
 
-    public enum IntTypes
+    public enum IntType
     {
-        Phone,
         Zip,
         VIN,
         PIN,
 
     }
 
-    public enum DoubleTypes
+    public enum DoubleType
     {
 
     }
 
-    public enum DecimalTypes
+    public enum DecimalType
     {
 
     }
