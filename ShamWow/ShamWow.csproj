@@ -8,6 +8,7 @@
     <Description>A class srubber that can be used for removing personally identifiable information.</Description>
     <RepositoryUrl>https://github.com/dills122/ShamWow</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageLicenseUrl>https://github.com/dills122/ShamWow/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
 
   <ItemGroup>
