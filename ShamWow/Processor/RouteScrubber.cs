@@ -20,28 +20,26 @@ namespace ShamWow.Processor
             _dirtyData = null;
         }
 
-
         public DocumentManifestInfo RouteType(PropertyInfo property, ref object dataInstance, ref ScrubType scrubType)
         {
-            if (Equals(property.PropertyType, typeof(System.Int32)))
+            var type = property.GetValue(dataInstance, null);
+
+            switch (type)
             {
-                RouteIntegerType(property, ref dataInstance, scrubType);
-            }
-            else if (Equals(property.PropertyType, typeof(System.Double)))
-            {
-                RouteDoubleType(property, ref dataInstance, scrubType);
-            }
-            else if (Equals(property.PropertyType, typeof(System.Decimal)))
-            {
-                RouteDecimalType(property, ref dataInstance, scrubType);
-            }
-            else if (Equals(property.PropertyType, typeof(System.String)))
-            {
-                RouteStringType(property, ref dataInstance, scrubType);
-            }
-            else
-            {
-                throw new NotSupportedTypeException("Type not supported by scrubber yet");
+                case decimal d:
+                    RouteDecimalType(property, ref dataInstance, scrubType);
+                    break;
+                case Int32 i:
+                    RouteIntegerType(property, ref dataInstance, scrubType);
+                    break;
+                case Double d:
+                    RouteDoubleType(property, ref dataInstance, scrubType);
+                    break;
+                case String s:
+                    RouteStringType(property, ref dataInstance, scrubType);
+                    break;
+                default:
+                    throw new NotSupportedTypeException("Type not supported by scrubber yet");
             }
 
             CreateManifestoItem(property);
