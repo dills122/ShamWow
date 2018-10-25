@@ -1,4 +1,5 @@
 using ShamWow.Processor;
+using ShamWow.Scrubbers;
 using ShamWowTests.TestModels;
 using System;
 using Xunit;
@@ -13,6 +14,8 @@ namespace ShamWowTests
         [InlineData("nexsysTech@faker.com")]
         public void SimpleTest(string email)
         {
+            var t = ScrubBasicTypes.ScrubVIN();
+
             SimpleTest test = new SimpleTest
             {
                 emailStr = email,
