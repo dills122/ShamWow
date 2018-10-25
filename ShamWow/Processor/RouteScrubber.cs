@@ -106,8 +106,7 @@ namespace ShamWow.Processor
                         property.SetValue(cleanDataInstance, Faker.Lorem.Sentence(atr.length));
                         break;
                     default:
-                        //TODO Update to lorem
-                        property.SetValue(cleanDataInstance, Faker.Lorem.Sentence());
+                        property.SetValue(cleanDataInstance, RouteGenericText(atr.length));
                         break;
                 }
 
@@ -131,6 +130,20 @@ namespace ShamWow.Processor
             }
         }
 
+        private object RouteGenericText(int length)
+        {
+            const int wordToSentence = 8;
+
+            switch(length)
+            {
+                case int i when i >= 0 && i <= 10:
+                    return Faker.Lorem.Sentence(10);
+                case int i when i >= 250:
+                    return Faker.Lorem.Sentences(i / wordToSentence);
+                default:
+                    return Faker.Lorem.Sentence(length);
+            }
+        }
 
         private object RouteDoubleType(PropertyInfo property, ref object cleanDataInstance, ScrubType scrubType)
         {
