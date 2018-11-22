@@ -6,6 +6,18 @@
         Marked
     }
 
+    public enum DoubleType { }
+    public enum DecimalType { }
+    public enum LongType { }
+    public enum ShortType { }
+    public enum ByteType { }
+    public enum DateTimeType { }
+    public enum FloatType { }
+    public enum UintType { }
+    public enum UlongType { }
+    public enum UshortType { }
+    public enum SbyteType { }
+
     public enum StringType
     {
         Address,
@@ -25,21 +37,10 @@
         Lorem
     }
 
-    public enum IntType
+    public enum IntegerType
     {
         Zip,
         VIN,
         PIN,
-
-    }
-
-    public enum DoubleType
-    {
-
-    }
-
-    public enum DecimalType
-    {
-
     }
 }
