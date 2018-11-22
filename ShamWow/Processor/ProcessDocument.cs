@@ -4,18 +4,21 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using ShamWow.Constants;
-using ShamWow.Attributes;
 using System.Linq;
+using ShamWow.Scrubbers;
 
 namespace ShamWow.Processor
 {
-    public class ProcessDocument : Router, IProcessDocument
+    public class ProcessDocument : IProcessDocument
     {
         private Type _type;
         private object _dataInstance;
         private DocumentManifest _manifest;
         private bool _IsScrubbed = false;
         private ScrubType _scrubType;
+
+        //TODO add in way for adding new state values to dictionary from internal instances of ShamWow
+        private Router _router;
 
         private ProcessDocument(object dirtyDataInstance, ScrubType scrubType)
         {
@@ -29,6 +32,23 @@ namespace ShamWow.Processor
             _dataInstance = dirtyDataInstance;
             _scrubType = scrubType;
             _manifest = new DocumentManifest();
+            _router = new Router(_type, dirtyDataInstance);
+        }
+
+
+        private ProcessDocument(object dirtyDataInstance, ScrubType scrubType, Dictionary<string, object> stateValues)
+        {
+            if (dirtyDataInstance == null)
+            {
+                throw new NullReferenceException("Data instance cannot be Null");
+            }
+
+            //Sets all the intial information
+            _type = dirtyDataInstance.GetType();
+            _scrubType = scrubType;
+            _dataInstance = dirtyDataInstance;
+            _manifest = new DocumentManifest();
+            _router = new Router(stateValues);
         }
 
         /// <summary>
@@ -137,7 +157,8 @@ namespace ShamWow.Processor
         {
             foreach (var prop in properties)
             {
-                var manifestInfo = RouteType(prop, ref _dataInstance, ref _scrubType);
+                _router.ScrubProperty(prop, ref _dataInstance);
+                var manifestInfo = _router._manifestItem;
                 if (manifestInfo != null)
                 {
                     _manifest.documentManifestInfos.Add(manifestInfo);
@@ -153,6 +174,7 @@ namespace ShamWow.Processor
         private List<PropertyInfo> GetCollections(bool IsFiltered)
         {
             var collection = _type.GetProperties().Where(p => IsCollection(p))
+                .Where(p => p.GetCustomAttribute<PreserveValue>() == null)
                 .Where(p => GetPropertyValue(p) != null)
                 .ToList();
 
@@ -174,6 +196,7 @@ namespace ShamWow.Processor
         private List<PropertyInfo> GetClasses(bool IsFiltered)
         {
             var collection = _type.GetProperties().Where(p => IsClass(p))
+                .Where(p => p.GetCustomAttribute<PreserveValue>() == null)
                 .Where(p => GetPropertyValue(p) != null)
                 .ToList();
 
@@ -189,6 +212,7 @@ namespace ShamWow.Processor
         private List<PropertyInfo> GetBaseTypes(bool IsFiltered)
         {
             var collection = _type.GetProperties().Where(p => !IsClass(p) && !IsCollection(p))
+                .Where(p => p.GetCustomAttribute<PreserveValue>() == null)
                 .Where(p => GetPropertyValue(p) != null)
                 .ToList();
 
@@ -307,7 +331,30 @@ namespace ShamWow.Processor
         /// <returns></returns>
         private object GetPropertyValue(PropertyInfo property)
         {
-            return property.GetValue(_dataInstance, null);
+            return property.CanRead
+                ? property.GetValue(_dataInstance, null)
+                : null;
+        }
+
+        /// <summary>
+        /// Checks if a value is a default value
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        private bool IsPropertyNullOrEmpty(PropertyInfo property)
+        {
+            var val = property.GetValue(_dataInstance, null);
+
+            if (val == null)
+            {
+                return true;
+            }
+
+            var type = val.GetType();
+
+            object obj = type.IsValueType ? Activator.CreateInstance(type) : null;
+
+            return Equals(val, obj);
         }
 
         /// <summary>

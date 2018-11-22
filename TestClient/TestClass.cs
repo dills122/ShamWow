@@ -1,18 +1,15 @@
-﻿using ShamWow.Attributes;
-using ShamWow.Constants;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using ShamWow.Constants;
+using ShamWow.Scrubbers;
 
 namespace TestClient
 {
     public class TestClass
     {
         [Scrub]
-        [StringAtr(StringType.Address)]
+        [ScrubString(StringType.Address)]
         public string str { get; set; }
         [Scrub]
-        [IntAtr(IntType.Zip)]
+        [ScrubInteger(IntegerType.Zip)]
         public int testZip { get; set; }
     }
 }
