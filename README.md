@@ -4,6 +4,53 @@ Built for processing production files and removing any sensitive data.
 
 This functions by adding data annotations/attributes to your transform POCOs.
 
+
+### Getting Started
+
+#### Step One
+
+Make sure all packages and dependencies are installed
+* ShamWow
+* Rock.TSI.Ambassador.Contracts
+* Faker.Net
+* Gridsum.DataflowEx
+* System.Data.HashFunction.xxHash
+
+> If you're using this with a Nexsys specific transform, then skip this step
+
+#### Step Two
+
+Create a transform object that maps all properties from your file to the object and annotate for scrubbing
+
+``` CSharp
+public class TestTransform 
+{
+    public int Id {get; set;}
+    [Scrub]
+    [StringAtr("Email")]
+    public string Email {get; set;}
+}
+```
+> for a list of available [Attributes](#attributes)
+
+#### Step Three
+
+Transform File to object and begin processing
+
+``` CSharp
+    //Gets instance of processor
+    IShamWow process = ShamWowEngine.GetFactory().Create(t, ShamWow.Constants.ScrubTypes.Marked);
+    //Starts Scrubbing
+    process.Scrub();
+    //Gets the clean data back
+    var clean = process.CleanData();
+    //Returns if the Scrub was successful
+    var manifestValue = process.CheckManifest();
+```
+
+
+
+
 ### Scrub Modes
 
 **Full** - Every property that has a compatible type will be scrubbed with the most basic method, unless annotated otherwise
@@ -63,7 +110,7 @@ This functions by adding data annotations/attributes to your transform POCOs.
 
 
 Example for scrubbing Email
-```
+``` CSharp
 [Scrub]
 [StringAtr("Email")]
 public string str {get; set;}
@@ -80,4 +127,9 @@ Through reflection this app is able to parse a POCO by properties and find data 
 
 
 ### Future
+
+* XML and JSON file Readers
+* TPL Dataflow Pipeline for process flow
 * Extensive Scrub Types
+
+### **Still a work in progress**

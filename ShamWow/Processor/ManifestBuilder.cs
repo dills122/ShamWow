@@ -6,9 +6,12 @@ using System.Reflection;
 
 namespace ShamWow.Processor
 {
+    /// <summary>
+    /// Builds a manifest that contains a hashed version of the data before/after scrubbing
+    /// </summary>
     public static class ManifestBuilder
     {
-        public static readonly IxxHash xxHash = xxHashFactory.Instance.Create();
+        private static readonly IxxHash xxHash = xxHashFactory.Instance.Create();
 
         public static string HashValue(string value)
         {
@@ -24,25 +27,32 @@ namespace ShamWow.Processor
         {
             try
             {
+                //Specific for Byte Array, Need to find better solution
+                Type valueType = value.GetType();
+                if(valueType.IsArray && valueType.Name.Contains("Byte"))
+                {
+                    value = Convert.ToBase64String((byte[])value);
+                }
+
                 var hash = xxHash.ComputeHash(value.ToString());
                 return hash.AsBase64String();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return String.Empty;
             }
         }
 
-        public static DocumentManifestInfo AddManifestInfo(PropertyInfo property, ref object dataObject, bool IsDirty = false,DocumentManifestInfo info = null)
+        public static DocumentManifestInfo AddManifestInfo(PropertyInfo property, ref object dataObject, bool IsDirty = false, DocumentManifestInfo info = null)
         {
-            if(info == null)
+            if (info == null)
             {
                 return IsDirty ? new DocumentManifestInfo() { property = property, dirtyDataHash = HashValue(property.GetValue(dataObject)) } :
                                  new DocumentManifestInfo() { property = property, cleanDataHash = HashValue(property.GetValue(dataObject)) };
             }
             else
             {
-                if(IsDirty)
+                if (IsDirty)
                 {
                     info.dirtyDataHash = HashValue(property.GetValue(dataObject, null));
                     return info;
@@ -82,13 +92,11 @@ namespace ShamWow.Processor
     public class DocumentManifestInfo
     {
         public PropertyInfo property { get; set; }
+        public bool IsStateful { get; set; }
         public string dirtyDataHash { get; set; }
         public string cleanDataHash { get; set; }
 
-        public DocumentManifestInfo()
-        {
-
-        }
+        public DocumentManifestInfo() { }
 
         public DocumentManifestInfo(PropertyInfo property, string dirtyValue, string cleanValue)
         {

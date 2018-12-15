@@ -1,4 +1,4 @@
-﻿using ShamWow.Attributes;
+﻿using ShamWow.Interfaces.Attributes;
 using ShamWow.Constants;
 
 namespace ShamWowTests.TestModels
@@ -7,11 +7,9 @@ namespace ShamWowTests.TestModels
     {
         public string testStr { get; set; }
         public int testInt { get; set; }
-        [Scrub]
-        [StringAtr(StringType.Email)]
+        [ScrubString(StringScrubber.Email)]
         public string emailString { get; set; }
-        [Scrub]
-        [StringAtr(StringType.Phone)]
+        [ScrubString(StringScrubber.Phone)]
         public string phoneStr { get; set; }
 
         public SimpleTest test { get; set; }

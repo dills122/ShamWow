@@ -3,21 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
-using ShamWow.Constants;
-using ShamWow.Attributes;
 using System.Linq;
+using ShamWow.Interfaces.Attributes;
 
 namespace ShamWow.Processor
 {
-    public class ProcessDocument : Router, IProcessDocument
+    /// <summary>
+    /// ShamWow Cleaner that processes and scrubs files
+    /// </summary>
+    public class ShamWowEngine : IShamWow
     {
-        private Type _type;
+        private Router _router;
+        private readonly Type _type;
         private object _dataInstance;
         private DocumentManifest _manifest;
         private bool _IsScrubbed = false;
-        private ScrubType _scrubType;
 
-        private ProcessDocument(object dirtyDataInstance, ScrubType scrubType)
+        private ShamWowEngine(object dirtyDataInstance)
         {
             if (dirtyDataInstance == null)
             {
@@ -27,8 +29,22 @@ namespace ShamWow.Processor
             //Sets all the intial information
             _type = dirtyDataInstance.GetType();
             _dataInstance = dirtyDataInstance;
-            _scrubType = scrubType;
             _manifest = new DocumentManifest();
+            _router = new Router(_type, dirtyDataInstance);
+        }
+
+        private ShamWowEngine(object dirtyDataInstance, Dictionary<string, object> stateValues)
+        {
+            if (dirtyDataInstance == null)
+            {
+                throw new NullReferenceException("Data instance cannot be Null");
+            }
+
+            //Sets all the intial information
+            _type = dirtyDataInstance.GetType();
+            _dataInstance = dirtyDataInstance;
+            _manifest = new DocumentManifest();
+            _router = new Router(_type, _dataInstance, stateValues);
         }
 
         /// <summary>
@@ -37,7 +53,7 @@ namespace ShamWow.Processor
         /// <returns></returns>
         public static Factory GetFactory()
         {
-            return new Factory((obj, scrub) => new ProcessDocument(obj, scrub));
+            return new Factory((obj) => new ShamWowEngine(obj));
         }
 
         /// <summary>
@@ -46,14 +62,11 @@ namespace ShamWow.Processor
         /// <returns></returns>
         public object CleanData()
         {
-            if (_IsScrubbed)
-            {
-                return _dataInstance;
-            }
-            else
+            if (!_IsScrubbed)
             {
                 throw new NotSupportedException("Data has not been scrubbed yet");
             }
+            return _dataInstance;
         }
 
         /// <summary>
@@ -69,22 +82,27 @@ namespace ShamWow.Processor
         /// Initiates the Scrubbing Process
         /// </summary>
         /// <returns></returns>
-        public ProcessDocument Scrub()
+        public ShamWowEngine Scrub()
         {
-            var IsFiltered =
-                _scrubType == ScrubType.Marked ? true : false;
+            ScrubCollections(GetCollections());
 
-            ScrubCollections(GetCollections(IsFiltered));
+            ScrubClasses(GetClasses());
 
-            ScrubClasses(GetClasses(IsFiltered));
-
-            ScrubBaseTypes(GetBaseTypes(IsFiltered));
+            ScrubBaseTypes(GetBaseTypes());
 
             _IsScrubbed = true;
 
             return this;
         }
 
+        public Dictionary<string, object> GetStateValues()
+        {
+            if (!_IsScrubbed)
+            {
+                throw new NotSupportedException("Data has not been scrubbed yet");
+            }
+            return _router.GetValues();
+        }
         /// <summary>
         /// Checks if the Manifest is Valid
         /// </summary>
@@ -137,7 +155,9 @@ namespace ShamWow.Processor
         {
             foreach (var prop in properties)
             {
-                var manifestInfo = RouteType(prop, ref _dataInstance, ref _scrubType);
+                _router.ScrubProperty(prop, ref _dataInstance);
+                var manifestInfo = _router._manifestItem;
+
                 if (manifestInfo != null)
                 {
                     _manifest.documentManifestInfos.Add(manifestInfo);
@@ -148,30 +168,22 @@ namespace ShamWow.Processor
         /// <summary>
         /// Gets a Collections of all Collections with the Object
         /// </summary>
-        /// <param name="IsFiltered"></param>
         /// <returns></returns>
-        private List<PropertyInfo> GetCollections(bool IsFiltered)
+        private List<PropertyInfo> GetCollections()
         {
             var collection = _type.GetProperties().Where(p => IsCollection(p))
                 .Where(p => GetPropertyValue(p) != null)
+                .Where(p => p.GetCustomAttribute<PreserveValueAttribute>() == null)  // If a property has [PreserveValue], then don't return it in the collection to scrub
                 .ToList();
 
-            if (IsFiltered)
-            {
-                return FilterProperties(collection);
-            }
-            else
-            {
-                return collection;
-            }
+            return collection;
         }
 
         /// <summary>
         /// Gets a Collection of all Classes within the Object
         /// </summary>
-        /// <param name="IsFiltered"></param>
         /// <returns></returns>
-        private List<PropertyInfo> GetClasses(bool IsFiltered)
+        private List<PropertyInfo> GetClasses()
         {
             var collection = _type.GetProperties().Where(p => IsClass(p))
                 .Where(p => GetPropertyValue(p) != null)
@@ -186,20 +198,14 @@ namespace ShamWow.Processor
         /// </summary>
         /// <param name="IsFiltered"></param>
         /// <returns></returns>
-        private List<PropertyInfo> GetBaseTypes(bool IsFiltered)
+        private List<PropertyInfo> GetBaseTypes()
         {
             var collection = _type.GetProperties().Where(p => !IsClass(p) && !IsCollection(p))
-                .Where(p => GetPropertyValue(p) != null)
+                .Where(p => !IsPropertyNullOrEmpty(p))
+                .Where(p => p.GetCustomAttribute<PreserveValueAttribute>() == null)  // If a property has [PreserveValue], then don't return it in the collection to scrub
                 .ToList();
 
-            if (IsFiltered)
-            {
-                return FilterProperties(collection);
-            }
-            else
-            {
-                return collection;
-            }
+            return collection;
         }
 
         /// <summary>
@@ -209,8 +215,10 @@ namespace ShamWow.Processor
         /// <returns></returns>
         private Task ScrubClass(PropertyInfo property)
         {
-            ProcessDocument process = new ProcessDocument(property.GetValue(_dataInstance), _scrubType)
+            ShamWowEngine process = new ShamWowEngine(property.GetValue(_dataInstance), _router.GetValues())
                 .Scrub();
+
+            _router.MergeStateValues(process.GetStateValues());
 
             property.SetValue(_dataInstance, process.CleanData());
 
@@ -226,8 +234,10 @@ namespace ShamWow.Processor
         /// <returns></returns>
         private Task<object> ScrubClass(object obj)
         {
-            ProcessDocument process = new ProcessDocument(obj, _scrubType)
+            ShamWowEngine process = new ShamWowEngine(obj, _router.GetValues())
                .Scrub();
+
+            _router.MergeStateValues(process.GetStateValues());
 
             ProcessManifestItems(process.GetManifest().documentManifestInfos);
 
@@ -256,16 +266,6 @@ namespace ShamWow.Processor
                 property.SetValue(_dataInstance, ilist);
             }
             return Task.CompletedTask;
-        }
-
-        /// <summary>
-        /// Filters out properties that aren't marked to be scrubbed
-        /// </summary>
-        /// <param name="properties"></param>
-        /// <returns></returns>
-        private List<PropertyInfo> FilterProperties(List<PropertyInfo> properties)
-        {
-            return properties.Where(p => GetCustomAttributes(p, typeof(Scrub))).ToList();
         }
 
         /// <summary>
@@ -307,7 +307,30 @@ namespace ShamWow.Processor
         /// <returns></returns>
         private object GetPropertyValue(PropertyInfo property)
         {
-            return property.GetValue(_dataInstance, null);
+            return property.CanRead
+                ? property.GetValue(_dataInstance, null)
+                : null;
+        }
+
+        /// <summary>
+        /// Checks if a value is a default value
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        private bool IsPropertyNullOrEmpty(PropertyInfo property)
+        {
+            var val = property.GetValue(_dataInstance, null);
+
+            if (val == null)
+            {
+                return true;
+            }
+
+            var type = val.GetType();
+
+            object obj = type.IsValueType ? Activator.CreateInstance(type) : null;
+
+            return Equals(val, obj);
         }
 
         /// <summary>
@@ -318,9 +341,8 @@ namespace ShamWow.Processor
         /// <returns></returns>
         private bool GetCustomAttributes(PropertyInfo property, Type AttributeName)
         {
-
             var customAttribute = property.GetCustomAttributes().Where(a => a.TypeId == AttributeName).ToList();
-            //Eh
+
             return customAttribute.Count == 1;
         }
 

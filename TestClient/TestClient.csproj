@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ShamWow\ShamWow.csproj" />
+    <ProjectReference Include="..\Rock.Nexsys.ShamWow\Rock.Nexsys.ShamWow.csproj" />
   </ItemGroup>
 
 </Project>

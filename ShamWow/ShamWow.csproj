@@ -1,20 +1,44 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
-    <PackageId>ShamWow_Scrubber</PackageId>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>ShamWow</PackageId>
     <Authors>Dills122</Authors>
     <Company>Steele Inc.</Company>
-    <Description>A class srubber that can be used for removing personally identifiable information.</Description>
-    <RepositoryUrl>https://github.com/dills122/ShamWow</RepositoryUrl>
+    <Product></Product>
+    <Description>A document parser that will scrub PII from objects.</Description>
+    <AssemblyName>Rock.Nexsys.ShamWow</AssemblyName>
+    <RootNamespace>Rock.Nexsys.ShamWow</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>2.0</Version>
     <PackageLicenseUrl>https://github.com/dills122/ShamWow/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl></PackageProjectUrl>
+    <RepositoryUrl>https://github.com/dills122/ShamWow</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="CountyFIPS.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="CountyFIPS.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Faker.Net" Version="1.0.3" />
-    <PackageReference Include="Gridsum.DataflowEx" Version="2.0.0" />
     <PackageReference Include="System.Data.HashFunction.xxHash" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ShamWow.Interfaces\ShamWow.Interfaces.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.AspNetCore.Http.Abstractions">
+      <HintPath>..\..\..\..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.aspnetcore.http.abstractions\2.1.1\lib\netstandard2.0\Microsoft.AspNetCore.Http.Abstractions.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
