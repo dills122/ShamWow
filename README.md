@@ -22,8 +22,8 @@ Once your POCOs are annotated and you have installed the ShamWow NuGet package y
 #### Initial Setup
 
 > Install needed NuGet packages along with their dependencies
-1. Nexsys.ShamWow.Processor
-2. Nexsys.ShamWow.Interfaces
+1. ShamWow.Processor
+2. ShamWow.Interfaces
 
 #### Step 1 Get Requirements
 
