@@ -1,24 +1,21 @@
-﻿using ShamWow.Constants;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
 namespace ShamWow.Processor
 {
     public class Factory
     {
-        private Func<Object, ScrubType, ProcessDocument> _ctorCaller;
+        private Func<Object, ShamWowEngine> _ctorCaller;
 
-        public Factory (Func<Object, ScrubType, ProcessDocument> ctorCaller)
+        public Factory (Func<Object, ShamWowEngine> ctorCaller)
         {
             _ctorCaller = ctorCaller;
         }
 
-        public ProcessDocument Create(object unScrubbedData, ScrubType scrubType)
+        public ShamWowEngine Create(object unScrubbedData)
         {
             if(unScrubbedData != null)
             {
-                return _ctorCaller(unScrubbedData, scrubType);
+                return _ctorCaller(unScrubbedData);
             }
             else
             {

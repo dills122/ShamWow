@@ -1,83 +1,83 @@
 # ShamWow Document Scrubber
 
-Built for processing production files and removing any sensitive data.
-
-This functions by adding data annotations/attributes to your transform POCOs.
-
-### Scrub Modes
-
-**Full** - Every property that has a compatible type will be scrubbed with the most basic method, unless annotated otherwise
-
-**Marked** - Will only scrub the marked properties in the method described in the annotation
-
-
-### Attributes
-
-* Scrubber
-
-> This is the main attribute required for marking data for scrubbing
-
-### Scrubbing Types
-
-#### StringAtr
-
-> Available String Scrub Types
-
-* Address
-* AddressTwo
-* City
-* State
-* Zip
-* Phone
-* SSN
-* Email
-* DOB
-* FullName
-* LastName
-* FirstName
-* MiddleName
-* UserName
-
-
-
-#### DoubleAtr
-
-> Available Double Types
-
-**Coming Soon**
-
-#### DecimalAtr
-
-> Available Decimal Types
-
-**Coming Soon**
-
-#### IntAtr
-
-> Available Integer Types
-
-* Phone
-* Zip
-* VIN (Coming Soon)
-* PIN (Coming Soon)
-
-
-Example for scrubbing Email
-```
-[Scrub]
-[StringAtr("Email")]
-public string str {get; set;}
-```
-
+ShamWow is a document scrubber to remove personally identifiable information while still retaining the same data type(Email, Phone, etc.). 
 
 ## How it Works
 
-Through reflection this app is able to parse a POCO by properties and find data marked for scrubbing through custom attributes.
+ShamWow uses reflection to gain access to all of the properties within a POCO (Plain Old C# Object) and iterates through all the properties while performing scrubbing specific to the type described within the POCO. You describe your type of scrubbing by annotating a property with its specific typed scrubber (ScrubDouble, ScrubInteger, etc.) and then add in the argument corresponding to the type of data you want your PII replaced with.
 
-> If you have a POCO then you're all set to start scrubbing personally identifiable information (PII)
+Example:
+``` csharp
+//How you would tell ShamWow to scrub an Address
+[ScrubString("Address")]
+public string StreetAddress1 { get; set; }
+```
 
-> The POCO for translating the file to an object will always be the user's responsibility
+> In this example ShamWow as long as the value isn't null, then this property will have its value replaced with a fake Address
+
+## Full Workflow Example
+
+Once your POCOs are annotated and you have installed the ShamWow NuGet package you're all set you begin scrubbing documents.
+
+#### Initial Setup
+
+> Install needed NuGet packages along with their dependencies
+1. Nexsys.ShamWow.Processor
+2. Nexsys.ShamWow.Interfaces
+
+#### Step 1 Get Requirements
+
+> Get object to scrub and get instance of ShamWow
+
+``` csharp
+//Fake object
+var obj = new object();
+//Get instance of ShamWow
+IShamWow processor = ShamWowEngine.GetFactory().Create(obj);
+```
+
+#### Step 2 Scrubbing
+
+> Start scrubbing and get clean values
+
+``` csharp
+//Start scrubbing
+processor.Scrub();
+//Retrieve clean data
+var cleanData = processor.CleanData();
+```
+
+#### Step 3 Verify Scrubbing
+
+> Get Manifest and verify the scrubbing was successful
+
+``` csharp
+//Get Manifest for Auditing purposes
+var manifest = processor.GetManifest();
+//Check the manifest for errors
+var IsSuccess = processor.CheckManifest();
+```
+
+## Special Attributes
+
+> **PreserveValue** ensure the that this property's value will not be scrubbed or changed
+
+> **StatefulScrub** allows you to define a variable name that then can be used throughout your POCO transform to ensure the value's of each decorated property will be the same.
+
+``` csharp
+//Example of Preserve attribute
+[PreserveValue]
+public string str {get; set;}
+//Examaple of a stateful scrub
+[StatefulScrub("StateOne")]
+public int id {get; set;}
+```
 
 
-### Future
-* Extensive Scrub Types
+## Wrap Up 
+
+Thats the basics of  ShamWow, it is meant to be very painless and require the least amount of intervention by the user. The three major items you need before scrubbing is 
+
+1. POCOs for data to mapping
+2. ShamWow NuGet package
+3. PII to scrub
