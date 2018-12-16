@@ -27,7 +27,7 @@ namespace ShamWow.Tests
                 Byte = Encoding.ASCII.GetBytes("Test STring")
             };
 
-            IShamWow processor = ShamWowEngine.GetFactory().Create(test);
+            IShamWow processor = ShamWowEngine.GetFactory().Create(test, Constants.ScrubMode.Marked);
 
             processor.Scrub();
             var cleanedData = (SimpleTest)processor.CleanData();
@@ -61,7 +61,7 @@ namespace ShamWow.Tests
                 }
             };
 
-            ShamWow.Processor.IShamWow processor = ShamWow.Processor.ShamWowEngine.GetFactory().Create(complex);
+            ShamWow.Processor.IShamWow processor = ShamWow.Processor.ShamWowEngine.GetFactory().Create(complex, Constants.ScrubMode.Marked);
 
             processor.Scrub();
             var cleanedData = (ComplexTest)processor.CleanData();
@@ -94,7 +94,7 @@ namespace ShamWow.Tests
             };
 
 
-            ShamWow.Processor.IShamWow processor = ShamWow.Processor.ShamWowEngine.GetFactory().Create(test);
+            ShamWow.Processor.IShamWow processor = ShamWow.Processor.ShamWowEngine.GetFactory().Create(test, Constants.ScrubMode.Marked);
 
             processor.Scrub();
             var cleanedData = (SimpleTest)processor.CleanData();
@@ -114,7 +114,7 @@ namespace ShamWow.Tests
                 KeepMeTheSame = expectedValue
             };
 
-            ShamWow.Processor.IShamWow processor = ShamWow.Processor.ShamWowEngine.GetFactory().Create(simpleTest);
+            ShamWow.Processor.IShamWow processor = ShamWow.Processor.ShamWowEngine.GetFactory().Create(simpleTest, Constants.ScrubMode.Marked);
             processor.Scrub();
             var cleanedData = (SimpleTest)processor.CleanData();
 
@@ -134,7 +134,7 @@ namespace ShamWow.Tests
                 str = "Test string"
             };
 
-            IShamWow processor = ShamWowEngine.GetFactory().Create(model);
+            IShamWow processor = ShamWowEngine.GetFactory().Create(model, Constants.ScrubMode.Full);
             processor.Scrub();
             var cleanedData = (ArrayTest)processor.CleanData();
 
@@ -159,7 +159,7 @@ namespace ShamWow.Tests
                 orderFile = Encoding.ASCII.GetBytes(fileStr) 
             };
 
-            IShamWow processor = ShamWowEngine.GetFactory().Create(model);
+            IShamWow processor = ShamWowEngine.GetFactory().Create(model, Constants.ScrubMode.Full);
             processor.Scrub();
 
             var cleanData = (FileTest)processor.CleanData();

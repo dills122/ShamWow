@@ -1,21 +1,22 @@
-﻿using System;
+﻿using ShamWow.Constants;
+using System;
 
 namespace ShamWow.Processor
 {
     public class Factory
     {
-        private Func<Object, ShamWowEngine> _ctorCaller;
+        private Func<Object, ScrubMode, ShamWowEngine> _ctorCallerMode;
 
-        public Factory (Func<Object, ShamWowEngine> ctorCaller)
+        public Factory (Func<Object, ScrubMode, ShamWowEngine> ctorCaller)
         {
-            _ctorCaller = ctorCaller;
+            _ctorCallerMode = ctorCaller;
         }
 
-        public ShamWowEngine Create(object unScrubbedData)
+        public ShamWowEngine Create(object unScrubbedData, ScrubMode mode)
         {
-            if(unScrubbedData != null)
+            if (unScrubbedData != null)
             {
-                return _ctorCaller(unScrubbedData);
+                return _ctorCallerMode(unScrubbedData, mode);
             }
             else
             {

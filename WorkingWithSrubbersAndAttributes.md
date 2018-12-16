@@ -2,14 +2,15 @@
 
 ### Contents
 
-1. [Strings](#Strings)
-2. [Decimal](#Decimal)
-3. [Double](#Double)
-4. [Integer](#Integer)
-5. [Long](#Long)
-6. [Short](#Short)
-7. [Misc](#Miscellaneous)
-8. [Other Attributes](#Other-Scrubbers)
+1. [Scrub Modes](#Scrub-Modes)
+2. [Strings](#Strings)
+3. [Decimal](#Decimal)
+4. [Double](#Double)
+5. [Integer](#Integer)
+6. [Long](#Long)
+7. [Short](#Short)
+8. [Misc](#Miscellaneous)
+9. [Other Attributes](#Other-Scrubbers)
    1. [Predefined Value Atr.](#PredefinedValue)
    2. [Preserve Value Atr.](#PreserveValue)
    3. [Stateful Scrub Atr.](#StatefulScrub)
@@ -26,6 +27,15 @@ ShamWow supports all primitive types such as
 6. Short
 7. Byte (Only Arrays)
 8. Arrays of any type above
+
+## Scrub Modes
+
+ShamWow offers two types of scrubbing modes, which are pretty self explanatory. 
+
+1. Marked
+2. Full
+
+Marked will only scrub value which have a scrubbing attribute on the property, whereas full mode will scrub any property that is accessible and not null.
 
 
 ## Strings

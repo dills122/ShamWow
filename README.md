@@ -32,8 +32,8 @@ Once your POCOs are annotated and you have installed the ShamWow NuGet package y
 ``` csharp
 //Fake object
 var obj = new object();
-//Get instance of ShamWow
-IShamWow processor = ShamWowEngine.GetFactory().Create(obj);
+//Get instance of ShamWow and run in marked only mode
+IShamWow processor = ShamWowEngine.GetFactory().Create(obj, ScrubMode.Marked);
 ```
 
 #### Step 2 Scrubbing
