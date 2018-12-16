@@ -18,7 +18,7 @@ namespace ShamWow.Tests
                 i = 50
             };
 
-            IShamWow processor = ShamWowEngine.GetFactory().Create(model);
+            IShamWow processor = ShamWowEngine.GetFactory().Create(model, Constants.ScrubMode.Full);
 
             processor.Scrub();
             var cleanedData = (PreserveTest)processor.CleanData();

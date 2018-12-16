@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Linq;
 using ShamWow.Interfaces.Attributes;
+using ShamWow.Constants;
 
 namespace ShamWow.Processor
 {
@@ -18,8 +19,9 @@ namespace ShamWow.Processor
         private object _dataInstance;
         private DocumentManifest _manifest;
         private bool _IsScrubbed = false;
+        private ScrubMode _mode;
 
-        private ShamWowEngine(object dirtyDataInstance)
+        private ShamWowEngine(object dirtyDataInstance, ScrubMode mode)
         {
             if (dirtyDataInstance == null)
             {
@@ -30,10 +32,11 @@ namespace ShamWow.Processor
             _type = dirtyDataInstance.GetType();
             _dataInstance = dirtyDataInstance;
             _manifest = new DocumentManifest();
+            _mode = mode;
             _router = new Router(_type, dirtyDataInstance);
         }
 
-        private ShamWowEngine(object dirtyDataInstance, Dictionary<string, object> stateValues)
+        private ShamWowEngine(object dirtyDataInstance, ScrubMode mode, Dictionary<string, object> stateValues)
         {
             if (dirtyDataInstance == null)
             {
@@ -44,6 +47,7 @@ namespace ShamWow.Processor
             _type = dirtyDataInstance.GetType();
             _dataInstance = dirtyDataInstance;
             _manifest = new DocumentManifest();
+            _mode = mode;
             _router = new Router(_type, _dataInstance, stateValues);
         }
 
@@ -53,7 +57,7 @@ namespace ShamWow.Processor
         /// <returns></returns>
         public static Factory GetFactory()
         {
-            return new Factory((obj) => new ShamWowEngine(obj));
+            return new Factory((obj, scrub) => new ShamWowEngine(obj, scrub));
         }
 
         /// <summary>
@@ -84,6 +88,7 @@ namespace ShamWow.Processor
         /// <returns></returns>
         public ShamWowEngine Scrub()
         {
+
             ScrubCollections(GetCollections());
 
             ScrubClasses(GetClasses());
@@ -176,7 +181,7 @@ namespace ShamWow.Processor
                 .Where(p => p.GetCustomAttribute<PreserveValueAttribute>() == null)  // If a property has [PreserveValue], then don't return it in the collection to scrub
                 .ToList();
 
-            return collection;
+            return FilterProperties(collection);
         }
 
         /// <summary>
@@ -205,7 +210,7 @@ namespace ShamWow.Processor
                 .Where(p => p.GetCustomAttribute<PreserveValueAttribute>() == null)  // If a property has [PreserveValue], then don't return it in the collection to scrub
                 .ToList();
 
-            return collection;
+            return FilterProperties(collection);
         }
 
         /// <summary>
@@ -215,7 +220,7 @@ namespace ShamWow.Processor
         /// <returns></returns>
         private Task ScrubClass(PropertyInfo property)
         {
-            ShamWowEngine process = new ShamWowEngine(property.GetValue(_dataInstance), _router.GetValues())
+            ShamWowEngine process = new ShamWowEngine(property.GetValue(_dataInstance), _mode, _router.GetValues())
                 .Scrub();
 
             _router.MergeStateValues(process.GetStateValues());
@@ -234,7 +239,7 @@ namespace ShamWow.Processor
         /// <returns></returns>
         private Task<object> ScrubClass(object obj)
         {
-            ShamWowEngine process = new ShamWowEngine(obj, _router.GetValues())
+            ShamWowEngine process = new ShamWowEngine(obj, _mode, _router.GetValues())
                .Scrub();
 
             _router.MergeStateValues(process.GetStateValues());
@@ -310,6 +315,21 @@ namespace ShamWow.Processor
             return property.CanRead
                 ? property.GetValue(_dataInstance, null)
                 : null;
+        }
+
+        private List<PropertyInfo> FilterProperties(List<PropertyInfo> properties)
+        {
+            if (_mode == ScrubMode.Marked)
+            {
+                var attributeList = Assembly.GetExecutingAssembly().GetTypes()
+                .Where(t => t.Namespace == "ShamWow.Interfaces.Attributes")
+                .ToList();
+
+                return properties.Where(prop => prop.GetCustomAttributes()
+                .Where(a => attributeList.Contains(a.GetType())) != null)
+                .ToList();
+            }
+            return properties;
         }
 
         /// <summary>

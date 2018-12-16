@@ -25,7 +25,7 @@ namespace ShamWow.Tests
             };
 
 
-            IShamWow processor = ShamWowEngine.GetFactory().Create(model);
+            IShamWow processor = ShamWowEngine.GetFactory().Create(model, Constants.ScrubMode.Marked);
 
             processor.Scrub();
             var cleanedData = (StatefulTest)processor.CleanData();
@@ -55,7 +55,7 @@ namespace ShamWow.Tests
             };
 
 
-            ShamWow.Processor.IShamWow processor = ShamWow.Processor.ShamWowEngine.GetFactory().Create(model);
+            ShamWow.Processor.IShamWow processor = ShamWow.Processor.ShamWowEngine.GetFactory().Create(model, Constants.ScrubMode.Marked);
 
             processor.Scrub();
             var cleanedData = (ComplexStateTest)processor.CleanData();
@@ -108,7 +108,7 @@ namespace ShamWow.Tests
                 }
             };
 
-            ShamWow.Processor.IShamWow processor = ShamWow.Processor.ShamWowEngine.GetFactory().Create(model);
+            ShamWow.Processor.IShamWow processor = ShamWow.Processor.ShamWowEngine.GetFactory().Create(model, Constants.ScrubMode.Marked);
 
             processor.Scrub();
             var cleanedData = (FullModelTest)processor.CleanData();
@@ -143,7 +143,7 @@ namespace ShamWow.Tests
                 IdTwo = IdTwo
             };
 
-            IShamWow processor = ShamWowEngine.GetFactory().Create(model);
+            IShamWow processor = ShamWowEngine.GetFactory().Create(model, Constants.ScrubMode.Marked);
 
             processor.Scrub();
             var cleanedData = (StatefulStringIdTest)processor.CleanData();

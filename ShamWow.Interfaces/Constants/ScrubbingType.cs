@@ -1,6 +1,6 @@
 ﻿namespace ShamWow.Constants
 {
-    public enum ScrubTypes
+    public enum ScrubMode
     {
         Full,
         Marked
