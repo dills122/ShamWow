@@ -1,5 +1,7 @@
 # ShamWow Document Scrubber
 
+[![Build Status](https://dev.azure.com/dss-gh/ShamWow/_apis/build/status/dills122.ShamWow?branchName=master)](https://dev.azure.com/dss-gh/ShamWow/_build/latest?definitionId=1?branchName=master)
+
 ShamWow is a document scrubber to remove personally identifiable information while still retaining the same data type(Email, Phone, etc.). 
 
 ## How it Works
