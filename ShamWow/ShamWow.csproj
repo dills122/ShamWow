@@ -27,7 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Codecov" Version="1.1.1" />
     <PackageReference Include="Faker.Net" Version="1.0.3" />
+    <PackageReference Include="OpenCover" Version="4.6.519" />
     <PackageReference Include="System.Data.HashFunction.xxHash" Version="2.0.0" />
   </ItemGroup>
 
