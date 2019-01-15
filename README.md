@@ -80,6 +80,6 @@ public int id {get; set;}
 
 Thats the basics of  ShamWow, it is meant to be very painless and require the least amount of intervention by the user. The three major items you need before scrubbing is 
 
-1. POCOs for data to mapping
-2. ShamWow NuGet package
+1. POCOs for data to be mapped to
+2. ShamWow Engine and Interface NuGet packages
 3. PII to scrub
