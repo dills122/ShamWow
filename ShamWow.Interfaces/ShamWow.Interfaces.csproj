@@ -13,8 +13,4 @@
     <RepositoryUrl>https://github.com/dills122/ShamWow</RepositoryUrl>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Codecov" Version="1.1.1" />
-  </ItemGroup>
-
 </Project>
