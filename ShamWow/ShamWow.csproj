@@ -7,8 +7,8 @@
     <Company>Steele Inc.</Company>
     <Product></Product>
     <Description>A document parser that will scrub PII from objects.</Description>
-    <AssemblyName>Rock.Nexsys.ShamWow</AssemblyName>
-    <RootNamespace>Rock.Nexsys.ShamWow</RootNamespace>
+    <AssemblyName>ShamWow</AssemblyName>
+    <RootNamespace>ShamWow</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>2.1</Version>
     <PackageLicenseUrl>https://github.com/dills122/ShamWow/blob/master/LICENSE</PackageLicenseUrl>
