@@ -9,7 +9,7 @@ namespace ShamWow.Tests
     {
         [Theory]
         [InlineData("A random string that will be scrubbed", "statefulness")]
-        [InlineData("A random string that should be scrubbed","state ful ness")]
+        [InlineData("A random string that should be scrubbed", "state ful ness")]
         public void TestStatefulAttribute(string randomStr, string otherStatful)
         {
             var model = new StatefulTest
@@ -24,12 +24,10 @@ namespace ShamWow.Tests
                 }
             };
 
-
             IShamWow processor = ShamWowEngine.GetFactory().Create(model, Constants.ScrubMode.Marked);
 
             processor.Scrub();
             var cleanedData = (StatefulTest)processor.CleanData();
-
 
             var man = processor.GetManifest();
 
@@ -54,12 +52,10 @@ namespace ShamWow.Tests
                 i = num
             };
 
-
             ShamWow.Processor.IShamWow processor = ShamWow.Processor.ShamWowEngine.GetFactory().Create(model, Constants.ScrubMode.Marked);
 
             processor.Scrub();
             var cleanedData = (ComplexStateTest)processor.CleanData();
-
 
             var man = processor.GetManifest();
 
@@ -79,7 +75,6 @@ namespace ShamWow.Tests
         [InlineData("A random string that should be scrubbed", "state ful ness", 30, 300)]
         public void FullModelTest(string randomStr, string anotherRandomStr, int num, int anotherNum)
         {
-
             var model = new FullModelTest
             {
                 anotherStateful = randomStr,
@@ -109,11 +104,8 @@ namespace ShamWow.Tests
             };
 
             ShamWow.Processor.IShamWow processor = ShamWow.Processor.ShamWowEngine.GetFactory().Create(model, Constants.ScrubMode.Marked);
-
             processor.Scrub();
             var cleanedData = (FullModelTest)processor.CleanData();
-
-
             var man = processor.GetManifest();
             //StateOne Asserts
             Assert.Equal(cleanedData.str, cleanedData.ComplexStateTest.str);
