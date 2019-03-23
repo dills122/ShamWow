@@ -375,6 +375,5 @@ namespace ShamWow.Processor
         {
             return property.GetCustomAttributes().ToList();
         }
-
     }
 }

@@ -16,7 +16,6 @@ namespace ShamWow.Tests
         [InlineData("nexsysTech@faker.com")]
         public void SimpleTest(string email)
         {
-
             string[] str = { "test", "testing", "test" };
 
             SimpleTest test = new SimpleTest
@@ -31,7 +30,6 @@ namespace ShamWow.Tests
 
             processor.Scrub();
             var cleanedData = (SimpleTest)processor.CleanData();
-
 
             var man = processor.GetManifest();
 
@@ -93,7 +91,6 @@ namespace ShamWow.Tests
                 MyLong = 323456789
             };
 
-
             ShamWow.Processor.IShamWow processor = ShamWow.Processor.ShamWowEngine.GetFactory().Create(test, Constants.ScrubMode.Marked);
 
             processor.Scrub();
@@ -120,11 +117,11 @@ namespace ShamWow.Tests
 
             Assert.Equal(expectedValue, cleanedData.KeepMeTheSame);
         }
+
         [Fact]
         public void ArrayScrub_EnsureSameTypeArrayReturnedScrubbed()
         {
             var testIntArray = new int[] { 50, 10, 25, 30 };
-
             var testStrArray = new string[] { "string", "strings", "stringys", "stringy strings" };
 
             var model = new ArrayTest
@@ -172,7 +169,6 @@ namespace ShamWow.Tests
 
             Assert.NotNull(cleanData.orderFile);
             Assert.Equal(expectedFileText, fileText);
-            
         }
     }
 }

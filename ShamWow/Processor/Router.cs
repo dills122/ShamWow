@@ -317,7 +317,6 @@ namespace ShamWow.Processor
 
         private object RouteLongType()
         {
-
             var scrubber = _currentProperty.GetCustomAttribute(typeof(ScrubLong));
             if (scrubber != null)
             {
