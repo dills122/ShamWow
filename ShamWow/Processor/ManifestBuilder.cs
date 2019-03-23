@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.HashFunction;
 using System.Data.HashFunction.xxHash;
+using System.Linq;
 using System.Reflection;
 
 namespace ShamWow.Processor
@@ -45,10 +46,12 @@ namespace ShamWow.Processor
 
         public static DocumentManifestInfo AddManifestInfo(PropertyInfo property, ref object dataObject, bool IsDirty = false, DocumentManifestInfo info = null)
         {
+            var prop = $"{property.Name}-{property.PropertyType.ToString().Split('.').Last()}";
+
             if (info == null)
             {
-                return IsDirty ? new DocumentManifestInfo() { property = property, dirtyDataHash = HashValue(property.GetValue(dataObject)) } :
-                                 new DocumentManifestInfo() { property = property, cleanDataHash = HashValue(property.GetValue(dataObject)) };
+                return IsDirty ? new DocumentManifestInfo() { property = prop, dirtyDataHash = HashValue(property.GetValue(dataObject)) } :
+                                 new DocumentManifestInfo() { property = prop, cleanDataHash = HashValue(property.GetValue(dataObject)) };
             }
             else
             {
@@ -67,11 +70,12 @@ namespace ShamWow.Processor
 
         public static DocumentManifestInfo CreateManifestInfo(PropertyInfo property, object dirtyValue, object cleanValue)
         {
+            var prop = $"{property.Name}-{property.PropertyType.ToString().Split('.').Last()}";
             return new DocumentManifestInfo
             {
                 cleanDataHash = HashValue(cleanValue),
                 dirtyDataHash = HashValue(dirtyValue),
-                property = property
+                property = prop
             };
         }
     }
@@ -91,14 +95,14 @@ namespace ShamWow.Processor
 
     public class DocumentManifestInfo
     {
-        public PropertyInfo property { get; set; }
+        public string property { get; set; }
         public bool IsStateful { get; set; }
         public string dirtyDataHash { get; set; }
         public string cleanDataHash { get; set; }
 
         public DocumentManifestInfo() { }
 
-        public DocumentManifestInfo(PropertyInfo property, string dirtyValue, string cleanValue)
+        public DocumentManifestInfo(string property, string dirtyValue, string cleanValue)
         {
             this.property = property;
             this.dirtyDataHash = ManifestBuilder.HashValue(dirtyDataHash);
