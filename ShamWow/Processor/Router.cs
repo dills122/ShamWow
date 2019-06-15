@@ -199,6 +199,11 @@ namespace ShamWow.Processor
                 ScrubInteger atr = propAttribute as ScrubInteger;
                 IntegerScrubber attrScrubType = atr.scrubber;
 
+                if (atr.start > int.MinValue && atr.end > int.MinValue && atr.end > atr.start)
+                {
+                    return Faker.RandomNumber.Next(atr.start, atr.end);
+                }
+
                 switch (attrScrubType)
                 {
                     case IntegerScrubber.Zip:
@@ -271,10 +276,14 @@ namespace ShamWow.Processor
             {
                 ScrubDecimal atr = scrubber as ScrubDecimal;
                 DecimalScrubber attrScrubType = atr.scrubber;
-
                 switch (attrScrubType)
                 {
                     default:
+                        if(atr.start > int.MinValue && atr.end > int.MinValue && atr.end > atr.start)
+                        {
+                            var value = Faker.RandomNumber.Next(atr.start, atr.end);
+                            return (decimal)(value == atr.end ? value : value + new Random().NextDouble());
+                        }
                         var defaultValue = Faker.RandomNumber.Next(50000) + new Random().NextDouble();
                         return Convert.ToDecimal(defaultValue);
                 }
@@ -304,6 +313,11 @@ namespace ShamWow.Processor
                 switch (attrScrubType)
                 {
                     default:
+                        if (atr.start > int.MinValue && atr.end > int.MinValue && atr.end > atr.start)
+                        {
+                            var value = Faker.RandomNumber.Next(atr.start, atr.end);
+                            return value == atr.end ? value : value + new Random().NextDouble();
+                        }
                         var defaultValue = Faker.RandomNumber.Next(50000) + new Random().NextDouble();
                         return defaultValue;
                 }
@@ -322,6 +336,12 @@ namespace ShamWow.Processor
             {
                 ScrubLong atr = scrubber as ScrubLong;
                 LongScrubber attrScrubType = atr.scrubber;
+
+                if (atr.start > int.MinValue && atr.end > int.MinValue && atr.end > atr.start)
+                {
+                    var value = Faker.RandomNumber.Next(atr.start, atr.end);
+                    return (long)(value == atr.end ? value : value + new Random().NextDouble());
+                }
 
                 switch (attrScrubType)
                 {

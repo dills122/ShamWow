@@ -7,12 +7,20 @@ namespace ShamWow.Interfaces.Attributes
     public class ScrubDouble : Attribute
     {
         public DoubleScrubber scrubber {get; private set; }
+        public int start { get; private set; }
+        public int end { get; private set; }
 
         public ScrubDouble() { }
 
         public ScrubDouble(DoubleScrubber scrubber)
         {
             this.scrubber = scrubber;
+        }
+
+        public ScrubDouble(int start, int end)
+        {
+            this.start = start;
+            this.end = end;
         }
     }
 }

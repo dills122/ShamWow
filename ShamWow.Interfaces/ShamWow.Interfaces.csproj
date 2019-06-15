@@ -6,11 +6,12 @@
     <Authors>Dills122</Authors>
     <Company>Steele Inc.</Company>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.1</Version>
+    <Version>2.2</Version>
     <Description>Attributes and scrubbers for ShamWow scrubber.</Description>
     <PackageProjectUrl></PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/dills122/ShamWow/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/dills122/ShamWow</RepositoryUrl>
+    <AssemblyVersion>2.2.0.0</AssemblyVersion>
   </PropertyGroup>
 
 </Project>
