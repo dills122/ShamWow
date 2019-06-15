@@ -1,32 +1,18 @@
-﻿using ShamWow.Interfaces.Attributes;
-using ShamWow.Processor;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using ShamWow.Processor;
+using ShamWow.Tests.TestModels;
 using Xunit;
 
 namespace ShamWow.Tests
 {
-    public class RangeTestObj
-    {
-        [ScrubDecimal(100,200)]
-        public decimal dec { get; set; }
-        [ScrubDouble(100, 200)]
-        public double dub { get; set; }
-        [ScrubInteger(100, 200)]
-        public int ing { get; set; }
-        [ScrubLong(100, 200)]
-        public long lng { get; set; }
-    }
-
     public class RangeTest
     {
         const int predefinedValue = 1000;
+
         [Fact]
         public void SimpleTest()
         {
-
-            var obj = new RangeTestObj {
+            var obj = new RangeTestObj
+            {
                 dec = predefinedValue,
                 dub = predefinedValue,
                 ing = predefinedValue,
