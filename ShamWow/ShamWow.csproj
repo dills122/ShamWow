@@ -10,10 +10,11 @@
     <AssemblyName>ShamWow</AssemblyName>
     <RootNamespace>ShamWow</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.1</Version>
+    <Version>2.2</Version>
     <PackageLicenseUrl>https://github.com/dills122/ShamWow/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl></PackageProjectUrl>
     <RepositoryUrl>https://github.com/dills122/ShamWow</RepositoryUrl>
+    <AssemblyVersion>2.2.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
